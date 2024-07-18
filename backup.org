@@ -1,0 +1,237 @@
+# -*- eval: (setq org-html-validation-link nil) -*-
+#+OPTIONS: num:nil validate:nil
+#+AUTHOR: R-U
+#+TITLE: backup.sh
+#+DESCRIPTION: A simple script for local backup in bash
+* Intro
+I'm going to be honest, guys and girls: it ain't gonna work if you don't give it a try.
+But things might go horribly wrong, you say? Yes.
+That's why we kick-off with a descent backup script in case we screw up.
+
+Let's start by defining some prerequisites for the script:
+- no external software needed
+- system-independent (work on any linux environment)
+- single excecutable file
+- written in bash
+
+Prerequisites for the Script
+
+Before we begin, let's define the prerequisites for our script:
+
+    No External Software Needed: The script should not rely on any software or tools that are not typically included in a standard Linux distribution.
+    System-Independent: The script should be portable and work across any Linux environment without requiring modifications.
+    Single Executable File: The script should be self-contained in a single file, making it easy to distribute and run.
+    Written in Bash: The script should be written in the Bash scripting language to ensure compatibility and simplicity.
+
+This clarification sets clear expectations for the requirements and constraints of the script you want to create.x  
+
+* Who is the hell is the shell?
+The shell is a mysterious entity that lives inside your computer. It is an invisible hull that separates you, the user, from the kernel. The kernel is like a wise old man one does not simply argue with. It is very strict in controlling the computer hardware. The shell, on the other hand, is more user-friendly: it interprets our wishes and communicates them to the kernel for us. If the kernel agrees, our demands are fulfilled. If you make the shell your friend, possibilities are endless!
+
+The shell is a command-line interface (CLI) that allows users to interact with the operating system by typing commands. It acts as an intermediary between the user and the kernel, which is the core part of the operating system responsible for managing system resources and hardware.
+
+The shell interprets the commands you enter and translates them into actions that the kernel can execute. There are several types of shells available, such as bash (Bourne Again Shell), zsh (Z Shell), and fish (Friendly Interactive Shell), each with its own features and scripting capabilities.
+
+When you type a command into the shell, it parses the command, identifies the executable program, and sends a request to the kernel to run that program. The kernel then allocates the necessary resources and executes the program. If the command is valid and the requested resources are available, the kernel fulfills the request and the program runs as expected. Otherwise, the shell returns an error message to the user.
+
+By learning shell commands and scripting, you can automate tasks, manage files, configure system settings, and perform a wide range of functions that enhance productivity and efficiency. Mastering the shell opens up a powerful and flexible way to interact with your computer's operating system.
+
+* shebang!
+#+begin_src bash :tangle yes :padline yes :tangle-mode o744
+  #!/usr/bin/env bash
+
+
+  ###########################################
+  #############    BACKUP SCRIPT   ##########
+  ###########  - v0.0.1-1beta -  ############
+  #########   @drytumbler  ##################
+  ###########################################
+
+  # Author: Dev Niklobuskrut Schmickl
+  # E-mail: schmickl@dev.org
+  # License: Send me money, pls -thx•Bye
+
+  # DISCLAIMER: 'This script comes with no warranty, run at your own risk!'
+
+  # Version:
+  VERSION="0.0.1-1beta"
+
+#+end_src
+* TODO todo's
+#+begin_src bash :tangle yes :padline yes :tangle-mode o744
+  ### TODO ###
+
+  # COMMIT :)  --- DONE
+  
+
+  # Should take arguments --- TODO
+  # SOURCE should not contain DESTINATION! --- TODO
+  # set/check dependencies, color stuff etc --- TODO
+  # expand/compose filenames correctly so $BACKUP_DIR/ represents root/ --- TODO
+  # Don't exit loop on first error, log and continue --- TODO
+  # refactor the loop --- TODO
+  # check if files are actually created or don't increment, failed is printed, but files are counted as created
+  # Ensure foolproof/safety!!! runs as root --- TODO
+  # Implement -v --verbose -d --dry-run options --- TODO
+  # other usefull options? new only, existing only, check all/only existing in BACKUP_DIR ... --- TODO 
+  # register backup attempt  --- TODO
+  # exclude pattern --- TODO
+
+
+#+end_src
+* TODO exclude
+#+begin_src bash  :tangle yes :padline yes :tangle-mode o744
+  # Unimplemented - do NOT use
+  EXCLUDE=""
+#+end_src
+* failstate 0: run as root
+#+begin_src bash :tangle yes :padline yes :tangle-mode o744
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
+#+end_src
+
+* major definitions
+#+begin_src bash :tangle yes :padline yes :tangle-mode o744
+
+  # Destination to store backup files
+  BACKUP_DIR="/mnt/BACKUP"
+  # Files or directories to backup
+  SOURCE_DIRS=( "docs" ".bashrc" "garblegob" )
+
+  # File to log messages
+  BACKUP_LOG_FILE="$HOME/.backup.log"
+
+  # Color definitions
+  RED=$(printf "\033[31m")
+  GREEN=$(printf "\033[32m")
+  YELLOW=$(printf "\033[33m")
+  NC='\033[0m' # No Color => resets changes
+  
+#+end_src
+* failstate 1: backup directory does not exist
+#+begin_src bash :tangle yes :padline yes :tangle-mode o744
+# Check output directory
+if [[ ! -d ${BACKUP_DIR} ]]; then
+	echo -e "$RED error: '${BACKUP_DIR}' is not a valid directory $NC"
+	exit 1
+fi
+#+end_src
+
+# Count files and directories
+#+begin_src bash :tangle yes :padline yes :tangle-mode o744
+for entry in ${SOURCE_DIRS[@]}; do
+    TOTAL_DIRS=$(echo $([[ -d ${entry} ]] && echo $((TOTAL_DIRS + 1)) || echo "${TOTAL_DIRS}"))
+    TOTAL_FILES=$(echo $(($(echo $((find ${entry} -type f -exec ls -l {} +) | wc -l) + TOTAL_FILES))))
+done
+
+echo TOTAL_DIRS FOUND: "${TOTAL_DIRS}"
+echo TOTAL_FILES FOUND: "${TOTAL_FILES}"
+#+end_src
+
+* eyecandy + failstate 2: user aborted
+#+begin_src bash :tangle yes :padline yes :tangle-mode o744
+echo
+echo -e "${RED}PROGRAM LIVE AS ROOT: PROCEED WITH CAUTION!${NC}"
+echo "DISCLAIMER: 'This script comes with no warranty, run at your own risk!' "
+echo -n "> Backup files to '${BACKUP_DIR}'? [y/N] "
+read -r response
+
+if ! [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]; then
+	echo -e "$RED error: aborted by user $NC"
+	exit 2
+fi
+echo 
+#+end_src
+
+* log message
+#+begin_src bash  :tangle yes :padline yes :tangle-mode o744
+echo -e "Backup $0-v${VERSION} process ${$} ${GREEN}started${NC} at: $(date)" | tee -a $BACKUP_LOG_FILE
+#+end_src
+
+* set up some counters
+#+begin_src bash :tangle yes :padline yes :tangle-mode o744
+COUNTER=0
+FAILED=0
+CREATED=0
+SKIPPED=0
+#+end_src
+
+* TODO start backing up
+#+begin_src bash :tangle yes :padline yes :tangle-mode o744
+  while IFS= read -r line; do
+      # find the file in the backup directory
+      #  |
+      #   ---> compare the modification date
+      #            |
+      #             ---> skip if not older
+      # copy the file
+      
+      BACKUP_FILE="${BACKUP_DIR}/${line}"
+
+      # test 1: are we receiving valid data?
+      if ! [[ -f ${line} ]]; then
+  	echo -e "${RED} error: input error${NC}"
+  	echo -e "${line}"
+  	exit 3
+      fi
+
+      # test 2: is the file modified since last backup
+      if [[ ${line} -nt ${BACKUP_FILE} ]]; then # true if file is modified or destination not present
+
+  	# test 3: if destination not present, create and log NEEDS UPDATE !!!
+  	# TODO test if creation failed
+  	if ! [[ -f ${BACKUP_FILE}  ]]; then
+  	    echo -ne "Creating new file '${BACKUP_FILE}': " | tee -a $BACKUP_LOG_FILE
+  	    touch -d "" "${BACKUP_FILE}"
+  	    CREATED=$((CREATED+1))
+  	else # destination is present but needs update
+  	    echo -ne "Updating file '${BACKUP_FILE}': " | tee -a $BACKUP_LOG_FILE
+  	fi
+
+  	# copy the modified file to destination
+  	cp --parents "${line}" "${BACKUP_DIR}"
+
+  	# check outcome
+  	if [[ $? -ne 0 ]]; then
+  	    echo -e "${RED}failed!${NC}" | tee -a $BACKUP_LOG_FILE
+  	    FAILED=$((FAILED+1))
+  	else
+  	    echo -e "${GREEN}done!${NC}" | tee -a $BACKUP_LOG_FILE
+  	    COUNTER=$((COUNTER+1))
+  	fi
+      else # backup is up-to-date
+
+  	# TODO: this and previous repeated statements should be more concise
+  	echo -e "Updating file '${BACKUP_FILE}': ${YELLOW}up-to-date${NC}" | tee -a $BACKUP_LOG_FILE
+  	SKIPPED=$((SKIPPED+1))
+      fi
+         
+  done < <(/usr/bin/find "${SOURCE_DIRS[@]}" -type f | sort -h) # eat it and beat it!
+#+end_src
+
+* make a summary for the logfile
+#+begin_src bash :tangle yes :padline yes :tangle-mode o744
+
+# getting the archaic syntax right
+SUBJECT=$([[ $COUNTER == 1 ]] && echo "operation" || echo "operations")
+echo   --- "${COUNTER}" "${SUBJECT}" succeeded. | tee -a $BACKUP_LOG_FILE
+SUBJECT=$([[ $SKIPPED == 1 ]] && echo "operation" || echo "operations")
+echo   --- "${SKIPPED}" "${SUBJECT}" skipped. | tee -a $BACKUP_LOG_FILE
+SUBJECT=$([[ $FAILED == 1 ]] && echo "operation" || echo "operations")
+echo   --- "${FAILED}" "${SUBJECT}" failed. | tee -a $BACKUP_LOG_FILE
+SUBJECT=$([[ $CREATED == 1 ]] && echo "new file" || echo "new files")
+echo   --- "${CREATED}" "${SUBJECT}" created. | tee -a $BACKUP_LOG_FILE
+
+cp "${BACKUP_LOG_FILE}" "${BACKUP_DIR}"
+
+echo -e "Backup $0-v${VERSION} process ${$} ${GREEN}completed${NC} at: $(date)" | tee -a $BACKUP_LOG_FILE
+#+end_src
+* terminate the script
+#+begin_src bash :tangle yes :padline yes :tangle-mode o744
+  # Now or never ...
+
+  # All done!
+  echo done
+#+end_src
