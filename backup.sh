@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+
+#############################
+######    BACKUP SCRIPT   ###
+##  - v0.0.1-1beta -   ######
+##   @drytumbler  ###########
+#############################
+
 VERSION="0.0.1-1beta"
 SOURCE_DIRS=( "docs" ".bashrc" "garblegob")
 
@@ -11,7 +18,11 @@ GREEN=$(printf "\033[32m")
 YELLOW=$(printf "\033[33m")
 NC='\033[0m' # No Color (std)
 
+# COMMIT :) 
+
 # SOURCE should not contain DESTINATION! --- TODO
+
+# set/check dependencies
 
 # expand/compose filenames correctly so $BACKUP_DIR/ represents /root
 
