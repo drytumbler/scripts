@@ -1,20 +1,21 @@
 #!/usr/bin/env bash
 
-
-###########################################
-#############    BACKUP SCRIPT   ##########
-###########  - v0.0.1-1beta -  ############
-#########   @drytumbler  ##################
-###########################################
+#############################################
+##############   BACKUP SCRIPT   ############
+##########   - v0.0rg.1-1beta -   ###########
+###########   @drytumbler   #################
+#############################################
 
 # Author: Dev Niklobuskrut Schmickl
 # E-mail: schmickl@dev.org
 # License: Send me money, pls -thx•Bye
 
+# This is the tangled version from backup.org, intended to replace backup.sh
+
 # DISCLAIMER: 'This script comes with no warranty, run at your own risk!'
 
 # Version:
-VERSION="0.0.1-1beta"
+VERSION="0.0rg.1-1beta"
 
 ### TODO ###
 
@@ -34,12 +35,13 @@ VERSION="0.0.1-1beta"
 # register backup attempt  --- TODO
 # exclude pattern --- TODO
 
-# Unimplemented - do NOT use
+# TODO - Unimplemented - do NOT use
 EXCLUDE=""
 
+# check caller uid, must be root, root, root (can propably be done with permissions)
 if [ "$EUID" -ne 0 ]
   then echo "Please run as root"
-  exit
+  exit 1
 fi
 
 # Destination to store backup files

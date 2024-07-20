@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# DISCLAIMER: This script comes with no warranty, run at your own risk!
+
 #############################
 ######    BACKUP SCRIPT   ###
 ##  - v0.0.1-1beta -   ######
@@ -19,24 +21,16 @@ YELLOW=$(printf "\033[33m")
 NC='\033[0m' # No Color (std)
 
 # COMMIT :) 
-
 # SOURCE should not contain DESTINATION! --- TODO
-
 # set/check dependencies
-
 # expand/compose filenames correctly so $BACKUP_DIR/ represents /root
-
 # Don't exit loop on first error, log and continue --- TODO
-
 # check if files are realy created or don't increment, failed is printed, but files are counted as created
-
 # Ensure safety!!! runs as root
-
 # Implement -v --verbose -d --dry-run options
-
 # other usefull options? new only, existing only, check all/only existing in BACKUP_DIR ...
-
 # register backup attempt  --- TODO
+
 touch $BACKUP_LOG_FILE
 
 # exclude pattern --- TODO
@@ -66,6 +60,7 @@ echo TOTAL_DIRS FOUND: "${TOTAL_DIRS}"
 echo TOTAL_FILES FOUND: "${TOTAL_FILES}"
 echo
 echo -e "${RED}PROGRAM LIVE: PROCEED WITH CAUTION!${NC}"
+echo "DISCLAIMER: 'This script comes with no warranty, run at your own risk!' "
 echo
 echo -n "> Backup files to '${BACKUP_DIR}'? [y/N] "
 read -r response

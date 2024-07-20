@@ -40,22 +40,22 @@ By learning shell commands and scripting, you can automate tasks, manage files, 
 #+begin_src bash :tangle yes :padline yes :tangle-mode o744
   #!/usr/bin/env bash
 
-
-  ###########################################
-  #############    BACKUP SCRIPT   ##########
-  ###########  - v0.0.1-1beta -  ############
-  #########   @drytumbler  ##################
-  ###########################################
+  #############################################
+  ##############   BACKUP SCRIPT   ############
+  ##########   - v0.0rg.1-1beta -   ###########
+  ###########   @drytumbler   #################
+  #############################################
 
   # Author: Dev Niklobuskrut Schmickl
   # E-mail: schmickl@dev.org
   # License: Send me money, pls -thx•Bye
 
+  # This is the tangled version from backup.org, intended to replace backup.sh
+
   # DISCLAIMER: 'This script comes with no warranty, run at your own risk!'
 
   # Version:
-  VERSION="0.0.1-1beta"
-
+  VERSION="0.0rg.1-1beta"
 #+end_src
 * TODO todo's
 #+begin_src bash :tangle yes :padline yes :tangle-mode o744
@@ -77,18 +77,18 @@ By learning shell commands and scripting, you can automate tasks, manage files, 
   # register backup attempt  --- TODO
   # exclude pattern --- TODO
 
-
-#+end_src
+  #+end_src
 * TODO exclude
 #+begin_src bash  :tangle yes :padline yes :tangle-mode o744
-  # Unimplemented - do NOT use
+  # TODO - Unimplemented - do NOT use
   EXCLUDE=""
 #+end_src
 * failstate 0: run as root
 #+begin_src bash :tangle yes :padline yes :tangle-mode o744
+# check caller uid, must be root, root, root (can propably be done with permissions)
 if [ "$EUID" -ne 0 ]
   then echo "Please run as root"
-  exit
+  exit 1
 fi
 #+end_src
 
